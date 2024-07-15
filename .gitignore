@@ -1,0 +1,8 @@
+.idea/
+__pycache__/
+*.egg-info/
+**/beir_embedding*/
+**/longeval*/
+wandb
+*.log
+build
