@@ -1,3 +1,22 @@
+# For repllama reproduce
+```bash
+cd ./examples/repllama
+```
+
+## For TREC-RAG
+```bash
+# parallel with 4 gpus
+corpus_dir=/workspace/trecrag/data/corpus/msmarco_v2.1_doc_segmented
+parallel=4
+device=0
+for ((i = $device; i <= 59; i += $parallel)); do
+  formatted_number=$(printf "%02d" $i)
+  sh run_trecrag_doc_encode.sh $device 16 \
+  ${corpus_dir}/msmarco_v2.1_doc_segmented_${formatted_number}.json \
+  ${corpus_dir}/msmarco_v2.1_doc_segmented_${formatted_number}.pkl
+done
+```
+
 # Tevatron
 Tevatron is a simple and efficient toolkit for training and running dense retrievers with deep language models. 
 The toolkit has a modularized design for easy research; a set of command line tools are also provided for fast
