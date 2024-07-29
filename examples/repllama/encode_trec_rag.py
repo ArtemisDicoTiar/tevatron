@@ -145,9 +145,10 @@ def main():
     if data_args.encode_is_qry:
         queries = {}
         with open(other_args.query_path, "r") as f:
-            # query_path is tsv file
+            # query_path is jsonl file
             for line in f:
-                query_id, query = line.strip().split("\t")
+                line_obj = json.loads(line)
+                query_id, query = line_obj["q id"], line_obj["query"]
                 queries[query_id] = query
 
         data_args.custom_query_df = datasets.Dataset.from_list([
