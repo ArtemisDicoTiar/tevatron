@@ -46,7 +46,11 @@ if __name__ == '__main__':
     qrels = defaultdict(dict)
     with qrels_file.open('r') as f:
         for line in f:
-            qid, _, did, rel = line.strip().split()
+            if "Q0" not in line:
+                qid, _, did, rel = line.strip().split()
+            else:
+                # 23287 Q0 msmarco_v2.1_doc_02_759557285#0_1325339642 1 22.581301 Anserini
+                qid, _, did, _, rel, _ = line.strip().split()
             qid = str(qid)
             did = str(did)
             rel = int(rel)
