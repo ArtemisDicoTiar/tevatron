@@ -24,10 +24,25 @@ if __name__ == '__main__':
 
     qrels_file = Path(args.qrels_file)
 
-    rankings_df = pd.DataFrame(columns=['qid', 'did', 'score'])
+
+    # 23287 Q0 msmarco_v2.1_doc_02_759557285#0_1325339642 1 22.581301 Anserini
+    columns = ['qid', 'did', 'score']
+
+    if "Q0" in open(input_file_paths[0]).read():
+        sep = " "
+        names = ['qid', 'Q0', 'did', 'rank', 'score', 'tag']
+        dtypes = {'qid': str, 'Q0': str, 'did': str, 'rank': int, 'score': float, 'tag': str}
+    else:
+        sep = "\t"
+        names = ['qid', 'did', 'score']
+        dtypes = {'qid': str, 'did': str, 'score': float}
+
+    rankings_df = pd.DataFrame(columns=columns)
     for input_file_path in tqdm(input_file_paths, desc='Reading ranking files'):
-        ranking_df = pd.read_csv(input_file_path, sep='\t', header=None, names=['qid', 'did', 'score'])
+        ranking_df = pd.read_csv(input_file_path, sep=sep, header=None, names=names, dtype=dtypes, usecols=columns)
         rankings_df = pd.concat([rankings_df, ranking_df])
+
+    rankings_df = rankings_df[['qid', 'did', 'score']]
 
     # rankings_df = rankings_df.sort_values(by=['qid', 'score'], ascending=[True, False])
     # slice by top1000 for each query
@@ -46,11 +61,8 @@ if __name__ == '__main__':
     qrels = defaultdict(dict)
     with qrels_file.open('r') as f:
         for line in f:
-            if "Q0" not in line:
-                qid, _, did, rel = line.strip().split()
-            else:
-                # 23287 Q0 msmarco_v2.1_doc_02_759557285#0_1325339642 1 22.581301 Anserini
-                qid, _, did, _, rel, _ = line.strip().split()
+            qid, _, did, rel = line.strip().split()
+
             qid = str(qid)
             did = str(did)
             rel = int(rel)
